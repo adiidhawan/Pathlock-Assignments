@@ -1,0 +1,204 @@
+/* src/styles.css
+   Full theme: red + black, strong symmetrical glows top-left & bottom-right
+   Use exact filename and path. Replace old file.
+*/
+
+/* tokens */
+:root{
+    --bg-900: #000000;
+    --red-800: #6f0707;
+    --red-700: #8b0e0e;
+    --red-600: #c21b1b;
+    --red-500: #ff2d2d;
+    --muted: #9b9b9b;
+    --card-border: rgba(255,0,0,0.06);
+    --card-border-strong: rgba(255,0,0,0.12);
+    --glass-blur: 10px;
+    --radius-lg: 14px;
+    --max-width: 920px;
+    --font-sans: "Figtree", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: "Instrument Serif", Georgia, serif;
+  }
+  
+  /* reset */
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  html,body,#root { height: 100%; width: 100%; }
+  
+  /* ensure no background gets in the way */
+  html, body { background: transparent !important; }
+  
+  /* body */
+  body {
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: #fff;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  /* ---------- full viewport shader background ----------
+     Class: .pm-full-bg (added by ShaderBackground.jsx)
+     Two bright radial glows + subtle sweep; z-index very low so it never blocks.
+  */
+  .pm-full-bg {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: -9999 !important;
+    pointer-events: none !important;
+  
+    background-color: #010101;
+    background-image:
+      /* subtle darkening gradient to keep center readable */
+      linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.28) 46%, rgba(0,0,0,0.62) 100%),
+  
+      /* primary top-left glow (large + bright) */
+      radial-gradient(circle at 10% 15%,
+        rgba(255, 36, 36, 0.60) 0%,
+        rgba(255, 28, 28, 0.30) 8%,
+        rgba(160, 20, 20, 0.14) 18%,
+        transparent 36%),
+  
+      /* mirrored bottom-right glow */
+      radial-gradient(circle at 92% 85%,
+        rgba(255, 34, 34, 0.54) 0%,
+        rgba(255, 28, 28, 0.24) 8%,
+        rgba(140, 12, 12, 0.12) 18%,
+        transparent 36%),
+  
+      /* mild horizontal sweep for depth */
+      linear-gradient(90deg, rgba(40,0,0,0.05), rgba(255,20,20,0.02) 40%, rgba(40,0,0,0.05));
+    background-blend-mode: normal, screen, screen, overlay;
+    filter: saturate(1.08) contrast(1.06);
+  }
+  
+  /* breathing/pulse overlay to keep it alive */
+  .pm-full-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 12% 12%,
+        rgba(255, 30, 30, 0.06) 0%,
+        rgba(255, 16, 16, 0.03) 10%,
+        transparent 30%),
+      radial-gradient(circle at 88% 88%,
+        rgba(255, 18, 18, 0.04) 0%,
+        rgba(255, 10, 10, 0.02) 12%,
+        transparent 34%);
+    mix-blend-mode: multiply;
+    animation: pm-bg-pulse 7s ease-in-out infinite;
+    opacity: 0.98;
+  }
+  @keyframes pm-bg-pulse {
+    0% { transform: scale(1); opacity: 0.95; filter: brightness(0.98) saturate(1.02); }
+    50%{ transform: scale(1.02); opacity: 1;    filter: brightness(1.02) saturate(1.08); }
+   100%{ transform: scale(1); opacity: 0.95; filter: brightness(0.98) saturate(1.02); }
+  }
+  
+  /* content wrapper above bg */
+  .shader-content {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 48px;
+  }
+  
+  /* app layout */
+  .app-outer { width: 100%; display:flex; justify-content:center; }
+  .container { width: 100%; max-width: var(--max-width); }
+  
+  /* main card (widget) - centered and bordered only around card */
+  .card {
+    width: 820px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.55));
+    border-radius: calc(var(--radius-lg) - 2px);
+    padding: 34px;
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.72);
+    margin: 0 auto;
+  }
+  
+  /* header */
+  .header h1 { font-family: var(--font-serif); color: var(--red-500); font-size: 2.2rem; margin-bottom: 6px; }
+  .subtitle { color: var(--muted); margin-bottom: 12px; }
+  
+  /* small controls / buttons */
+  .small-btn { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; background: rgba(255,255,255,0.03); color: #fff; }
+  .small-btn.danger { background: rgba(170,10,10,0.12); color: var(--red-500); }
+  .btn-primary {
+    background: linear-gradient(180deg,var(--red-600), var(--red-700));
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  
+  /* inputs + black description */
+  .input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
+    color: #fff;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .textarea {
+    width: 100%;
+    min-height: 90px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #000; /* explicitly black */
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.06);
+    resize: vertical;
+    margin-bottom: 10px;
+  }
+  
+  /* project / task blocks */
+  .project-box { padding: 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.03); margin-bottom: 12px; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; background: rgba(255,255,255,0.01); }
+  .project-left { flex: 1; }
+  .project-meta { color: var(--muted); font-size: 12px; text-align: right; }
+  
+  /* tasks */
+  .task-list { list-style: none; padding-left: 0; margin-top: 8px; }
+  .task-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px; border-radius: 10px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.02); }
+  .task-left { display:flex; align-items:center; gap:12px; min-width:0; }
+  
+  /* circle button and completed state */
+  .circle-btn { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.02); display:inline-flex; align-items:center; justify-content:center; border: 1px solid rgba(255,255,255,0.03); flex: 0 0 auto; cursor: pointer; transition: all .16s ease; }
+  .circle-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
+  
+  /* when completed: green fill and inset shadow */
+  .circle-btn.completed {
+    background: linear-gradient(180deg,#1fb558,#1d9e4d);
+    border: 1px solid rgba(0,0,0,0.22);
+    color: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 -2px 4px rgba(0,0,0,0.12);
+  }
+  .task-title { font-weight: 600; color: #fff; font-size: 1rem; min-width:0; overflow-wrap:break-word; transition: color .12s ease, text-decoration .12s ease; }
+  .task-title.completed { text-decoration: line-through; color: rgba(255,255,255,0.5); }
+  
+  /* icons & message */
+  .icon-btn { background: transparent; border: none; cursor: pointer; padding:6px; border-radius:6px; color:#fff; }
+  .icon-btn.danger { color: #ff9b9b; }
+  .message { padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; margin-bottom: 12px; color: #fff; }
+  
+  /* hide old debug remnants */
+  .debug, .token-area { display: none !important; }
+  
+  /* responsive */
+  @media (max-width: 920px) {
+    .card { width: 94%; padding: 20px; }
+    .task-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+  
