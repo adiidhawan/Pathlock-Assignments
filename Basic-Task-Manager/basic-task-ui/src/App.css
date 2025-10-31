@@ -1,0 +1,158 @@
+:root{
+  --bg-900: #000000;
+  --red-500: #ff2d2d;
+  --red-600: #e02424;
+  --muted: #9b9b9b;
+  --card-border: rgba(255,0,0,0.10);
+  --card-border-strong: rgba(255,0,0,0.18);
+  --glass-blur: 10px;
+  --radius-lg: 18px;
+  --max-width: 980px;
+  --font-sans: "Figtree", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
+}
+
+/* Reset */
+* { box-sizing: border-box; margin:0; padding:0; -webkit-font-smoothing:antialiased; }
+
+/* Ensure full viewport */
+html, body, #root { height: 100%; width: 100%; }
+
+/* --- SHADER LAYERS: FIXED and behind everything --- */
+/* mesh-wrap fixed so shader never changes layout; z-index below content */
+.mesh-wrap {
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Target whatever the shader component renders: canvas / svg / .mesh-gradient */
+.mesh-wrap .mesh-gradient,
+.mesh-wrap canvas,
+.mesh-wrap svg,
+.mesh-wrap .mesh-primary-canvas,
+.mesh-wrap .mesh-secondary-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* secondary overlay opacity classes (controlled from TSX) */
+.shader-idle { opacity: 0.45; transition: opacity 400ms ease; mix-blend-mode: screen; z-index: -1; }
+.shader-active { opacity: 0.85; transition: opacity 400ms ease; mix-blend-mode: screen; z-index: -1; }
+
+/* fallback gradient (also fixed and behind shader mesh) */
+.fallback-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,40,40,0.06), transparent 8%),
+    radial-gradient(circle at 80% 70%, rgba(80,0,0,0.06), transparent 18%),
+    linear-gradient(180deg,#000000,#120000 60%, #000000);
+  opacity: 1;
+}
+
+/* When shader component is missing, make fallback a bit stronger */
+.shader-root[data-shader-present="false"] .fallback-gradient {
+  filter: saturate(1.1) contrast(1.05);
+}
+
+/* --- Content sits above shaders --- */
+.shader-content { position: relative; z-index: 10; }
+
+/* App outer wrapper: full viewport center */
+.app-outer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  width: 100%;
+}
+
+/* Container and card: larger and centered */
+.container.large-center { width: 100%; max-width: var(--max-width); display:flex; justify-content:center; }
+
+/* Larger card: more padding, stronger glass and centered layout */
+.card.large-card {
+  width: 820px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.66), rgba(0,0,0,0.52));
+  border-radius: calc(var(--radius-lg) - 4px);
+  padding: 40px;
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.75);
+  margin: 0 auto;
+}
+
+/* Header */
+.header { margin-bottom: 18px; text-align:left; }
+.header h1 { font-family: var(--font-serif); color: var(--red-500); font-size: 2.6rem; margin-bottom: 6px; letter-spacing: -1px; }
+.subtitle { color: var(--muted); font-size: 1rem; }
+
+/* Add row */
+.add-task { display:flex; gap:14px; margin: 18px 0 22px; align-items:center; }
+.add-task input {
+  flex:1; padding:14px 16px; border-radius:12px;
+  background: rgba(255,255,255,0.03); color:#fff; border:1px solid var(--card-border);
+  font-size: 16px;
+}
+.btn-add {
+  padding:12px 20px; border-radius:12px; background: linear-gradient(180deg,var(--red-600), #990f0f);
+  color:#fff; font-weight:700; border:none; cursor:pointer;
+}
+
+/* Filter tabs */
+.filter-tabs { display:flex; gap:12px; margin-bottom:20px; }
+.filter-tabs button { padding:8px 14px; border-radius:10px; background:transparent; color:var(--muted); border:1px solid transparent; cursor:pointer; font-weight:600; }
+.filter-tabs button.active { background: rgba(255,45,45,0.12); color:var(--red-500); border-color: var(--card-border-strong); }
+
+/* Tasks area */
+.tasks-section { width:100%; }
+.task-list { list-style:none; display:flex; flex-direction:column; gap:12px; margin-top:6px; }
+
+/* Each task card */
+.task-list li {
+  display:flex; align-items:center; justify-content:space-between; padding:16px; gap:12px;
+  border-radius:12px; background: rgba(0,0,0,0.54); border:1px solid rgba(255,0,0,0.06);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.task-list li:hover { transform: translateY(-6px); box-shadow: 0 18px 50px rgba(170,0,0,0.06); border-color: var(--card-border-strong); }
+
+/* Left content */
+.task-left { display:flex; align-items:center; gap:14px; flex:1; min-width:0; }
+.task-list input[type="checkbox"] { width:20px; height:20px; accent-color: var(--red-500); }
+.task-content { display:flex; flex-direction:column; gap:6px; min-width:0; }
+.task-description { font-size:1.14rem; font-weight:700; color:#fff; overflow-wrap:break-word; }
+.task-meta { color:var(--muted); font-size:12px; }
+
+/* Right area */
+.task-right { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+.status-badge { padding:8px 12px; border-radius:999px; font-weight:700; font-size:13px; color:#fff; }
+.status-badge.pending { background: rgba(255,255,255,0.06); color:var(--muted); }
+.status-badge.completed { background: linear-gradient(90deg,#aa0f0f,var(--red-600)); color:#fff; }
+.btn-delete { background:transparent; border:none; color: #ff9b9b; cursor:pointer; font-weight:700; }
+
+/* Empty */
+.empty-state { padding:20px; text-align:center; color:var(--muted); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .card.large-card { width: 92%; padding: 26px; border-radius:14px; }
+  .header h1 { font-size: 2.0rem; }
+  .task-description { font-size: 1.02rem; }
+}
+
+@media (max-width: 520px) {
+  .add-task { flex-direction: column; gap:10px; }
+  .btn-add { width:100%; }
+  .task-list li { flex-direction: column; align-items:flex-start; gap:12px; }
+  .task-right { width:100%; justify-content:space-between; }
+}

@@ -1,0 +1,30 @@
+# --- React (frontend) ---
+basic-task-ui/node_modules/
+basic-task-ui/dist/
+basic-task-ui/build/
+basic-task-ui/.env.local
+
+# --- .NET (backend) ---
+basic-task-api/bin/
+basic-task-api/obj/
+*.db
+*.dll
+*.pdb
+*.suo
+
+# --- MacOS + IDE ---
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# --- Environment ---
+.env
+
+# Mini Project (React + .NET)
+mini-project-aditya/mini-project-ui/node_modules/
+mini-project-aditya/mini-project-ui/dist/
+mini-project-aditya/mini-project-api/bin/
+mini-project-aditya/mini-project-api/obj/
+mini-project-aditya/mini-project-api/*.db
+
